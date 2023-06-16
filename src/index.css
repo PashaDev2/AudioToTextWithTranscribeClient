@@ -1,0 +1,167 @@
+@import "tailwindcss/base.css";
+@import "tailwindcss/components.css";
+@import "tailwindcss/utilities.css";
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    --bgColor: rgb(1, 1, 4);
+    --bgColorLight: rgb(160, 160, 171);
+    --textColor: hsla(242, 86%, 88%, 1);
+    --textColorDark: rgb(112, 77, 77);
+    --paperColor: rgb(217, 217, 222);
+    --paperColorDark: rgb(117, 116, 128);
+    --shadowColorFaint: hsla(0, 31%, 46%, 0.2);
+}
+
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+a:hover {
+    color: #535bf2;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background: var(--bgColor);
+    background: linear-gradient(135deg, var(--bgColor), var(--bgColorLight));
+    color: var(--textColor);
+    font-family: "Saira", sans-serif;
+    position: relative;
+}
+
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+}
+
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+button:hover {
+    border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color: #213547;
+        background-color: #ffffff;
+    }
+    a:hover {
+        color: #747bff;
+    }
+    button {
+        background-color: #f9f9f9;
+    }
+}
+
+#root {
+    width: 100%;
+    position: relative;
+    height: 100%;
+    z-index: 1;
+}
+
+::selected {
+    color: var(--textColorDark);
+}
+
+* {
+    box-sizing: border-box;
+    transition: all 0.12s cubic-bezier(0.42, 0.54, 0.22, 1.26);
+}
+
+/* canvas {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+} */
+
+audio {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    width: calc(100% - 20px);
+}
+
+audio.active {
+    bottom: 10px;
+}
+
+#thefile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+
+    z-index: 1;
+}
+
+label.file {
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    bottom: 50px;
+    transform: translate3d(-50%, -50%, 0);
+    padding: 1rem 2rem;
+    border-radius: 4px;
+
+    background: var(--paperColor);
+    color: var(--textColor);
+    font-size: 1.25em;
+    font-weight: 700;
+    box-shadow: 0 20px 60px var(--shadowColorFaint);
+
+    cursor: pointer;
+}
+
+label.file:hover {
+    background: var(--paperColorDark);
+    transform: translate3d(-50%, -55%, 0);
+}
+
+label.file:active {
+    background: var(--paperColorDark);
+    transform: translate3d(-50%, -45%, 0);
+}
+
+label.file.normal {
+    transform: translate3d(10%, 50%, 0);
+    padding: 0.2rem 2rem;
+    font-size: 1rem;
+    top: 0;
+    left: 0;
+}

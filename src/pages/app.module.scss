@@ -1,0 +1,12 @@
+.main {
+    width: 100vw;
+    height: 100vh;
+}
+$audio-height: 80px;
+.canvasContainer {
+    position: absolute;
+    bottom: $audio-height;
+    left: 0;
+    height: calc(50vh - #{$audio-height});
+    width: 100vw;
+}

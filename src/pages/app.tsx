@@ -2,14 +2,8 @@ import style from "./app.module.scss";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Accept, useDropzone } from "react-dropzone"; // for file upload
 import axios from "axios"; // to make network request
-// import TimePicker from "../components/timePicker"; // our custom TimePicker
 import { toast, ToastContainer } from "react-toastify"; // for toast notification
-
 import { gsap } from "gsap";
-
-// import { SimplexNoise } from "three/examples/jsm/math/SimplexNoise.js";
-
-// import "./visualizeAudio";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -18,16 +12,6 @@ const timeToSeconds = (time: string) => {
     const [hours, minutes, seconds] = time.split(":").map(v => parseInt(v, 10));
     return hours * 3600 + minutes * 60 + seconds;
 };
-
-// Helper function for conversion from seconds to time
-// const secondsToTime = (totalSeconds: number) => {
-//     const hours = Math.floor(totalSeconds / 3600);
-//     const minutes = Math.floor((totalSeconds % 3600) / 60);
-//     const seconds = totalSeconds % 60;
-//     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
-//         seconds
-//     ).padStart(2, "0")}`;
-// };
 
 // Helper function for conversion from time to minutes and seconds
 const timeToMinutesAndSeconds = (time: string) => {
@@ -44,28 +28,15 @@ const App = () => {
     const [uploading, setUploading] = useState(false);
     const [transcription, setTranscription] = useState("");
     const [audioFile, setAudioFile] = useState<File | null>(null);
-    const [startTime, setStartTime] = useState("00:00:00");
-    const [endTime, setEndTime] = useState("00:10:00"); // 10 minutes default endtime
-    const [audioDuration, setAudioDuration] = useState<number | null>(null);
-
-    // const handleStartTimeChange = (newStartTime: string) => {
-    //     const startTimeSeconds = timeToSeconds(newStartTime);
-    //     const endTimeSeconds = timeToSeconds(endTime);
-
-    //     if (startTimeSeconds >= endTimeSeconds) {
-    //         const newEndTimeSeconds = Math.min(startTimeSeconds + 600, audioDuration || 0);
-    //         const newEndTime = secondsToTime(newEndTimeSeconds);
-    //         setEndTime(newEndTime);
-    //     }
-
-    //     setStartTime(newStartTime);
-    // };
+    const [startTime] = useState("00:00:00");
+    const [endTime] = useState("00:10:00"); // 10 minutes default endtime
+    // const [audioDuration, setAudioDuration] = useState<number | null>(null);
 
     const getAudioDuration = (file: File) => {
         const audio = new Audio(URL.createObjectURL(file));
         if (audio.duration) {
             audio.addEventListener("loadedmetadata", () => {
-                setAudioDuration(audio.duration);
+                // setAudioDuration(audio.duration);
             });
         }
     };
@@ -99,9 +70,13 @@ const App = () => {
             formData.append("startTime", timeToMinutesAndSeconds(startTime));
             formData.append("endTime", timeToMinutesAndSeconds(endTime));
 
-            const response = await axios.post(`http://localhost:3001/api/v1/transcribe`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            const response = await axios.post(
+                `https://1444-94-179-177-176.ngrok-free.app/api/v1/transcribe`,
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
 
             setTranscription(response.data.transcription);
 
@@ -216,8 +191,8 @@ const Scene = ({ audio }: { audio?: HTMLMediaElement }) => {
         }
     }, [audio, context]);
 
-    useFrame(state => {
-        const time = state.clock.getElapsedTime();
+    useFrame(() => {
+        // const time = state.clock.getElapsedTime();
         if (analyzer) {
             const bufferLength = analyzer.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
@@ -274,68 +249,6 @@ const Scene = ({ audio }: { audio?: HTMLMediaElement }) => {
             planesRefs.current[0].scale.y = data[0] / 100 + 1;
         }
     });
-
-    // const makeRoughBall = useCallback((mesh: THREE.Mesh, bassFr: number, treFr: number) => {
-    //     const positionAttribute = mesh.geometry.getAttribute("position");
-
-    //     // const _mesh = new THREE.Mesh(mesh.geometry, mesh.material);
-    //     const geometry = mesh.geometry as THREE.SphereGeometry;
-    //     geometry.computeVertexNormals();
-
-    //     // const position = mesh.geometry.attributes.position;
-    //     // const index = mesh.geometry.index;
-    //     // const normal = mesh.geometry.attributes.normal;
-    //     const offset = geometry.parameters.radius;
-
-    //     const vertex = new THREE.Vector3();
-
-    //     for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
-    //         vertex.fromBufferAttribute(positionAttribute, vertexIndex);
-
-    //         const amp = 2;
-    //         const time = Date.now();
-
-    //         // vertex.normalize();
-
-    //         const rf = 0.00001;
-    //         const distance =
-    //             offset +
-    //             bassFr +
-    //             noise.noise3d(
-    //                 vertex.x + time * rf * 7,
-    //                 vertex.y + time * rf * 8,
-    //                 vertex.z + time * rf * 9
-    //             ) *
-    //                 amp *
-    //                 treFr;
-
-    //         vertex.multiplyScalar(distance);
-    //     }
-    //     geometry.computeVertexNormals();
-    // }, []);
-
-    // const makeRoughGround = useCallback((mesh: THREE.Mesh, distortionFr: number) => {
-    //     const positionAttribute = mesh.geometry.getAttribute("position");
-
-    //     const vertex = new THREE.Vector3();
-
-    //     for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
-    //         vertex.fromBufferAttribute(positionAttribute, vertexIndex);
-
-    //         const amp = 2;
-    //         const distance =
-    //             noise.noise3d(vertex.x * 0.0003, vertex.y * 0.0001, vertex.z) * distortionFr * amp;
-    //         vertex.z = distance;
-
-    //         positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
-
-    //         positionAttribute.needsUpdate = true;
-
-    //         mesh.geometry.attributes.position.needsUpdate = true;
-    //     }
-
-    //     mesh.geometry.computeVertexNormals();
-    // }, []);
 
     return (
         <>
@@ -418,3 +331,88 @@ function max(arr: number[]) {
         return Math.max(a, b);
     });
 }
+
+// const handleStartTimeChange = (newStartTime: string) => {
+//     const startTimeSeconds = timeToSeconds(newStartTime);
+//     const endTimeSeconds = timeToSeconds(endTime);
+
+//     if (startTimeSeconds >= endTimeSeconds) {
+//         const newEndTimeSeconds = Math.min(startTimeSeconds + 600, audioDuration || 0);
+//         const newEndTime = secondsToTime(newEndTimeSeconds);
+//         setEndTime(newEndTime);
+//     }
+
+//     setStartTime(newStartTime);
+// };
+
+// const makeRoughBall = useCallback((mesh: THREE.Mesh, bassFr: number, treFr: number) => {
+//     const positionAttribute = mesh.geometry.getAttribute("position");
+
+//     // const _mesh = new THREE.Mesh(mesh.geometry, mesh.material);
+//     const geometry = mesh.geometry as THREE.SphereGeometry;
+//     geometry.computeVertexNormals();
+
+//     // const position = mesh.geometry.attributes.position;
+//     // const index = mesh.geometry.index;
+//     // const normal = mesh.geometry.attributes.normal;
+//     const offset = geometry.parameters.radius;
+
+//     const vertex = new THREE.Vector3();
+
+//     for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
+//         vertex.fromBufferAttribute(positionAttribute, vertexIndex);
+
+//         const amp = 2;
+//         const time = Date.now();
+
+//         // vertex.normalize();
+
+//         const rf = 0.00001;
+//         const distance =
+//             offset +
+//             bassFr +
+//             noise.noise3d(
+//                 vertex.x + time * rf * 7,
+//                 vertex.y + time * rf * 8,
+//                 vertex.z + time * rf * 9
+//             ) *
+//                 amp *
+//                 treFr;
+
+//         vertex.multiplyScalar(distance);
+//     }
+//     geometry.computeVertexNormals();
+// }, []);
+
+// const makeRoughGround = useCallback((mesh: THREE.Mesh, distortionFr: number) => {
+//     const positionAttribute = mesh.geometry.getAttribute("position");
+
+//     const vertex = new THREE.Vector3();
+
+//     for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
+//         vertex.fromBufferAttribute(positionAttribute, vertexIndex);
+
+//         const amp = 2;
+//         const distance =
+//             noise.noise3d(vertex.x * 0.0003, vertex.y * 0.0001, vertex.z) * distortionFr * amp;
+//         vertex.z = distance;
+
+//         positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
+
+//         positionAttribute.needsUpdate = true;
+
+//         mesh.geometry.attributes.position.needsUpdate = true;
+//     }
+
+//     mesh.geometry.computeVertexNormals();
+// }, []);
+
+// Helper function for conversion from seconds to time
+// const secondsToTime = (totalSeconds: number) => {
+//     const hours = Math.floor(totalSeconds / 3600);
+//     const minutes = Math.floor((totalSeconds % 3600) / 60);
+//     const seconds = totalSeconds % 60;
+//     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+//         seconds
+//     ).padStart(2, "0")}`;
+// };

@@ -71,7 +71,7 @@ const App = () => {
             formData.append("endTime", timeToMinutesAndSeconds(endTime));
 
             const response = await axios.post(
-                `https://1444-94-179-177-176.ngrok-free.app/api/v1/transcribe`,
+                `https://ac74-94-179-177-176.ngrok-free.app/api/v1/transcribe`,
                 formData,
                 {
                     headers: { "Content-Type": "multipart/form-data" },
